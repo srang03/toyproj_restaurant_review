@@ -1,32 +1,40 @@
 package org.example.toyporj.controller;
 
+import lombok.AllArgsConstructor;
+import org.example.toyporj.DTO.CreateAndEditRestaurant;
 import org.example.toyporj.domain.Restaurant;
+import org.example.toyporj.service.RestaurantService;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-public class RestaurantController {
-    @GetMapping("/restaurants")
-    public String retrieveRestaurant() {
-        return "retrieveRestaurant";
-    }
+import java.util.List;
 
-    @GetMapping("/restaurants/{id}")
-    public String retrieveRestaurantById(@PathVariable Long id) {
-        return "retrieveRestaurantById: " + id;
-    }
+@RestController
+@AllArgsConstructor
+public class RestaurantController {
+    private final RestaurantService restaurantService;
 
     @PostMapping("/restaurants")
-    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
-        return restaurant;
+    public Restaurant createRestaurant(@RequestBody CreateAndEditRestaurant restaurant) {
+        return restaurantService.createRestaurant(restaurant);
     }
 
     @PutMapping("/restaurants/{id}")
-    public String updateRestaurantById(@PathVariable Long id){
-        return "updateRestaurantById: "+ id;
+    public Restaurant updateRestaurantById(@PathVariable Long id, @RequestBody CreateAndEditRestaurant request) {
+        return restaurantService.editRestaurant(id, request);
     }
 
     @DeleteMapping("/restaurants/{id}")
-    public String deleteRestaurantById(@PathVariable Long id) {
-        return "deleteRestaurantById: " + id;
+    public Restaurant deleteRestaurantById(@PathVariable Long id) {
+        return restaurantService.deleteRestaurant(id);
+    }
+
+    @GetMapping("/restaurants/{id}")
+    public Restaurant getRestaurantById(@PathVariable Long id) {
+        return restaurantService.getRestaurantById(id);
+    }
+
+    @GetMapping("/restaurants")
+    public List<Restaurant> getAllRestaurants() {
+        return restaurantService.getAllRestaurants();
     }
 }
