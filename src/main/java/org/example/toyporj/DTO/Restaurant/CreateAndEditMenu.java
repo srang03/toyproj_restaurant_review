@@ -1,4 +1,4 @@
-package org.example.toyporj.DTO;
+package org.example.toyporj.DTO.Restaurant;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

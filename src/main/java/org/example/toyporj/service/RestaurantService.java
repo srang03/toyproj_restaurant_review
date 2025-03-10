@@ -2,7 +2,8 @@ package org.example.toyporj.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.toyporj.DTO.CreateAndEditRestaurant;
+import org.example.toyporj.DTO.Restaurant.CreateAndEditRestaurant;
+import org.example.toyporj.DTO.Restaurant.RestaurantView;
 import org.example.toyporj.domain.Menu;
 import org.example.toyporj.domain.Restaurant;
 import org.example.toyporj.repository.MenuRepository;
@@ -73,11 +74,36 @@ public class RestaurantService {
         return restaurant;
     }
 
-    public Restaurant getRestaurantById(Long restaurantId) {
-        return restaurantRepository.findById(restaurantId).orElseThrow(() -> new RuntimeException("Not FoundException"));
+    public RestaurantView getRestaurantById(Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new RuntimeException("Not FoundException"));
+        List<Menu> menus = menuRepository.findAllByRestaurantId(restaurantId);
+        return RestaurantView.builder()
+                .id(restaurant.getId())
+                .name(restaurant.getName())
+                .address(restaurant.getAddress())
+                .createdDateTime(restaurant.getCreatedDateTime())
+                .updatedDateTime(restaurant.getUpdatedDateTime())
+                .menus(menus.stream().map((menu)-> RestaurantView.Menu.builder()
+                        .id(menu.getId())
+                        .name(menu.getName())
+                        .price(menu.getPrice())
+                        .createdDateTime(menu.getCreatedDateTime())
+                        .updatedDateTime(menu.getUpdatedDateTime())
+                        .build()
+                    ).toList()
+                )
+                .build();
     }
 
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll();
+    public List<RestaurantView> getAllRestaurants() {
+        List<Restaurant> restaurants =  restaurantRepository.findAll();
+
+      return restaurants.stream().map((restaurant) -> RestaurantView.builder()
+                  .id(restaurant.getId())
+                    .name(restaurant.getName())
+                  .address(restaurant.getAddress())
+                  .createdDateTime(restaurant.getCreatedDateTime())
+                  .updatedDateTime(restaurant.getUpdatedDateTime())
+                  .build()).toList();
     }
 }
